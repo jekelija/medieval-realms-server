@@ -1,98 +1,77 @@
-extern crate ws;
-extern crate json;
-extern crate uuid;
+//! An example web service using ructe with the warp framework.
+#![deny(warnings)]
+#[macro_use]
+extern crate diesel;
+
+mod models;
+mod schema;
+mod session;
+mod auth;
 
 
-use std::rc::Rc;
-use std::cell::Cell;
-use std::collections::HashMap;
+use dotenv::dotenv;
+use session::{create_session_filter};
+use auth::{do_login, do_logout, do_signup};
+use models::{Error, ErrorMessage};
 
-use ws::{listen, Handler, Sender, Result, Message, Handshake, CloseCode};
 
-use uuid::Uuid;
+use warp::{
+    Filter, Rejection, Reply,
+};
+use warp::http::{StatusCode};
+use warp::{body, path};
 
-struct Server {
-    out: Sender,
-    count: Rc<Cell<u32>>,
-    waiting_games: HashMap<String,String>
-}
 
-impl Handler for Server {
 
-    fn on_open(&mut self, _: Handshake) -> Result<()> {
-        // We have a new connection, so we increment the connection counter
-        Ok(self.count.set(self.count.get() + 1))
-    }
-
-    fn on_message(&mut self, msg: Message) -> Result<()> {
-        // Parse the string of data into serde_json::Value.
-        let parsed = json::parse(msg.as_text()?).unwrap();
-        println!("The number of live connections is {}", self.count.get());
-
-        if parsed["type"] == "GameStart" {
-            let new_uuid = Uuid::new_v4().to_hyphenated().to_string();
-            let new_uuid_to_send = new_uuid.clone();
-            self.waiting_games.insert(new_uuid, r#""#.to_string());//TODO store game data
-
-            let return_msg = json::object!{
-                "type" => "GameCreated",
-                "uuid" => new_uuid_to_send
-            };
-
-            self.out.send(return_msg.dump())
-        }
-        else if parsed["type"] == "GameJoin" {
-            let uuid = parsed["gameUUID"].as_str().unwrap();
-
-            if self.waiting_games.contains_key(uuid) {
-                let return_msg = json::object!{
-                    "type" => "GameJoined"
-                };
-
-                self.out.send(return_msg.dump())
-            }
-            else {
-                let return_msg = json::object!{
-                    "type" => "GameJoined",
-                    "error" => "Could not find game"
-                };
-
-                self.out.send(return_msg.dump())
-            }
-
-            
-        }
-        else {
-            // Echo the message back
-            self.out.send(msg)
-        }
-        
-    }
-
-    fn on_close(&mut self, code: CloseCode, reason: &str) {
-        match code {
-            CloseCode::Normal => println!("The client is done with the connection."),
-            CloseCode::Away   => println!("The client is leaving the site."),
-            CloseCode::Abnormal => println!(
-                "Closing handshake failed! Unable to obtain closing status from client."),
-            _ => println!("The client encountered an error: {}", reason),
-        }
-
-        // The connection is going down, so we need to decrement the count
-        self.count.set(self.count.get() - 1)
-    }
-
-    fn on_error(&mut self, err: ws::Error) {
-        println!("The server encountered an error: {:?}", err);
-    }
-
-}
-
+/// Main program: Set up routes and start server.
 fn main() {
-  // Cell gives us interior mutability so we can increment
-  // or decrement the count between handlers.
-  // Rc is a reference-counted box for sharing the count between handlers
-  // since each handler needs to own its contents.
-  let count = Rc::new(Cell::new(0));
-  listen("127.0.0.1:3012", |out| { Server { out: out, count: count.clone(), waiting_games: HashMap::new() } }).unwrap()
-} 
+    dotenv().ok();
+    env_logger::init();
+
+    // Get a filter that adds a session to each request.
+    let pgsess = create_session_filter("host=localhost port=5432 dbname=medieval-realms connect_timeout=10 user=postgres password=Hufflepuff4life");
+    let s = move || pgsess.clone();
+
+    let routes = warp::post2().and(
+            (s().and(path("login")).and(body::form()).and_then(do_login))
+                .or(s().and(path("logout")).and_then(do_logout))
+                .or(s()
+                    .and(path("signup"))
+                    .and(body::form())
+                    .and_then(do_signup)),
+        )
+        .recover(customize_error);
+    warp::serve(routes).run(([127, 0, 0, 1], 3030));
+}
+
+/// Create custom error pages.
+// This function receives a `Rejection` and tries to return a custom
+// value, othewise simply passes the rejection along.
+fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
+    if let Some(&err) = err.find_cause::<Error>() {
+        let code = match err {
+            // Error::NoGameFound => StatusCode::BAD_REQUEST,
+            Error::UserNotFound => StatusCode::BAD_REQUEST
+        };
+        let msg = err.to_string();
+
+        let json = warp::reply::json(&ErrorMessage {
+            code: code.as_u16(),
+            message: msg,
+        });
+        Ok(warp::reply::with_status(json, code))
+    } else if let Some(_) = err.find_cause::<warp::reject::MethodNotAllowed>() {
+        // We can handle a specific error, here METHOD_NOT_ALLOWED,
+        // and render it however we want
+        let code = StatusCode::METHOD_NOT_ALLOWED;
+        let json = warp::reply::json(&ErrorMessage {
+            code: code.as_u16(),
+            message: "oops, you aren't allowed to use this method.".into(),
+        });
+        Ok(warp::reply::with_status(json, code))
+    } else {
+        // Could be a NOT_FOUND, or any other internal error... here we just
+        // let warp use its default rendering.
+        Err(err)
+    }
+}
