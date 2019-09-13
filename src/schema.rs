@@ -1,17 +1,18 @@
 table! {
     sessions (id) {
-        id -> Int4,
+        id -> Integer,
         cookie -> Varchar,
-        user_id -> Int4,
+        user_id -> Integer,
     }
 }
 
 table! {
     users (id) {
-        id -> Int4,
+        id -> Integer,
         username -> Varchar,
-        realname -> Varchar,
+        name -> Varchar,
         password -> Varchar,
+        salt -> Varchar,
     }
 }
 
