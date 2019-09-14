@@ -7,12 +7,13 @@ mod models;
 mod schema;
 mod session;
 mod auth;
+mod game;
 
 
 use dotenv::dotenv;
 use session::{create_session_filter};
 use auth::{do_login, do_logout, do_signup};
-
+use game::{do_create_game, do_join_game};
 
 use warp::{
     Filter
@@ -41,7 +42,17 @@ fn main() {
                     .and(body::json())
                     .and_then(do_login);
 
-    let post = warp::post2().and(signup.or(logout).or(login));
+    let create_game = s().and(path("create"))
+                    .and(body::json())
+                    .and_then(do_create_game);
+    let join_game = s().and(path("join"))
+                    .and(body::json())
+                    .and_then(do_join_game);
+
+    let game = warp::path("game").and(create_game.or(join_game));
+
+
+    let post = warp::post2().and(signup.or(logout).or(login).or(game));
 
     warp::serve(post).run(([127, 0, 0, 1], 3030));
 }

@@ -6,6 +6,11 @@ use ring::{pbkdf2};
 
 static PBKDF2_ALG: pbkdf2::Algorithm = pbkdf2::PBKDF2_HMAC_SHA512;
 
+pub enum GameState {
+    CREATED,
+    // JOINED,
+    // OVER
+}
 
 #[derive(Debug, Queryable)]
 pub struct User {

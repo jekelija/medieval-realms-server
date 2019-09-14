@@ -1,4 +1,16 @@
 table! {
+    games (id) {
+        id -> Integer,
+        player1_id -> Integer,
+        player2_id -> Integer,
+        player1_data -> Jsonb,
+        player2_data -> Jsonb,
+        state -> Integer,
+        shared_data -> Jsonb,
+    }
+}
+
+table! {
     sessions (id) {
         id -> Integer,
         cookie -> Varchar,
@@ -19,3 +31,4 @@ table! {
 joinable!(sessions -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(sessions, users);
+allow_tables_to_appear_in_same_query!(games, users);

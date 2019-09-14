@@ -8,11 +8,12 @@ edition = "2018"
 
 [dependencies]
 serde = { version = "1.0.0", features = ["derive"] }
+serde_json = "*"
 env_logger="*"
 warp = "*"
 log = "0.4.6"
 uuid = { version = "0.7", features = ["serde", "v4"] }
-diesel = { version = "1.4.0", features = ["r2d2", "postgres"] }
+diesel = { version = "1.4.0", features = ["r2d2", "postgres", "serde_json"] }
 dotenv = "0.14.1"
 bcrypt = "0.5.0"
 rand = "0.7.0"
