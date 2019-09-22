@@ -1,0 +1,542 @@
+--
+-- PostgreSQL database cluster dump
+--
+
+-- Started on 2019-09-14 15:18:32 EDT
+
+SET default_transaction_read_only = off;
+
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+
+--
+-- Roles
+--
+
+CREATE ROLE postgres;
+ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION BYPASSRLS PASSWORD 'md524f2b4144c3b7629b2a133d0e0d67b45';
+
+
+
+
+
+
+\connect template1
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.5
+-- Dumped by pg_dump version 11.5
+
+-- Started on 2019-09-14 15:18:32 EDT
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+-- Completed on 2019-09-14 15:18:33 EDT
+
+--
+-- PostgreSQL database dump complete
+--
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.5
+-- Dumped by pg_dump version 11.5
+
+-- Started on 2019-09-14 15:18:33 EDT
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 3173 (class 1262 OID 16393)
+-- Name: medieval-realms; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE "medieval-realms" WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C' LC_CTYPE = 'C';
+
+
+ALTER DATABASE "medieval-realms" OWNER TO postgres;
+
+\connect -reuse-previous=on "dbname='medieval-realms'"
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 204 (class 1259 OID 16444)
+-- Name: games; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.games (
+    id integer NOT NULL,
+    player1_id integer NOT NULL,
+    player2_id integer,
+    player1_data jsonb NOT NULL,
+    player2_data jsonb,
+    state smallint NOT NULL,
+    shared_data jsonb NOT NULL
+);
+
+
+ALTER TABLE public.games OWNER TO postgres;
+
+--
+-- TOC entry 201 (class 1259 OID 16438)
+-- Name: game_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.game_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.game_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3174 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: game_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.game_id_seq OWNED BY public.games.id;
+
+
+--
+-- TOC entry 202 (class 1259 OID 16440)
+-- Name: game_player1_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.game_player1_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.game_player1_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3175 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: game_player1_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.game_player1_id_seq OWNED BY public.games.player1_id;
+
+
+--
+-- TOC entry 203 (class 1259 OID 16442)
+-- Name: game_player2_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.game_player2_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.game_player2_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3176 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: game_player2_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.game_player2_id_seq OWNED BY public.games.player2_id;
+
+
+--
+-- TOC entry 198 (class 1259 OID 16411)
+-- Name: sessions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.sessions (
+    id integer NOT NULL,
+    cookie character varying NOT NULL,
+    user_id integer NOT NULL
+);
+
+
+ALTER TABLE public.sessions OWNER TO postgres;
+
+--
+-- TOC entry 196 (class 1259 OID 16407)
+-- Name: sessions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.sessions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sessions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3177 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: sessions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.sessions_id_seq OWNED BY public.sessions.id;
+
+
+--
+-- TOC entry 197 (class 1259 OID 16409)
+-- Name: sessions_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.sessions_user_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sessions_user_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3178 (class 0 OID 0)
+-- Dependencies: 197
+-- Name: sessions_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.sessions_user_id_seq OWNED BY public.sessions.user_id;
+
+
+--
+-- TOC entry 200 (class 1259 OID 16423)
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    username character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
+    password character varying(255) NOT NULL,
+    salt character varying(255)
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- TOC entry 199 (class 1259 OID 16421)
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3179 (class 0 OID 0)
+-- Dependencies: 199
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- TOC entry 3025 (class 2604 OID 16447)
+-- Name: games id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.games ALTER COLUMN id SET DEFAULT nextval('public.game_id_seq'::regclass);
+
+
+--
+-- TOC entry 3023 (class 2604 OID 16414)
+-- Name: sessions id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sessions ALTER COLUMN id SET DEFAULT nextval('public.sessions_id_seq'::regclass);
+
+
+--
+-- TOC entry 3024 (class 2604 OID 16426)
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- TOC entry 3167 (class 0 OID 16444)
+-- Dependencies: 204
+-- Data for Name: games; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.games (id, player1_id, player2_id, player1_data, player2_data, state, shared_data) FROM stdin;
+7	13	\N	{"my_cards": [{"id": 1}]}	\N	0	{"trade_row": [{"id": 1}]}
+\.
+
+
+--
+-- TOC entry 3161 (class 0 OID 16411)
+-- Dependencies: 198
+-- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.sessions (id, cookie, user_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3163 (class 0 OID 16423)
+-- Dependencies: 200
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.users (id, username, name, password, salt) FROM stdin;
+13	roboSpurs21	Dan	59D83FC8A237CF9AA147092CDFD99A84E2077F2D892AC9727314E459D3E0E93CCAFEE1E71BFCBCAC26CCF6340B130ADA987FFE3EE7152742E566AA1B3354B881	D62698DAF4DC505224F227D1FE39018A726F626F53707572733231
+14	banalWalrus	Jon	67A3B2D5E4A55BFB29F9ACB1324F92DF20E86B176093E9FE83006244DFB313B4CD8637BF47426F149D98493F1579C295830AEFB07F26DCAB5CBEA25BFD33290F	D62698DAF4DC505224F227D1FE39018A62616E616C57616C727573
+\.
+
+
+--
+-- TOC entry 3180 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: game_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.game_id_seq', 7, true);
+
+
+--
+-- TOC entry 3181 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: game_player1_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.game_player1_id_seq', 1, false);
+
+
+--
+-- TOC entry 3182 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: game_player2_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.game_player2_id_seq', 6, true);
+
+
+--
+-- TOC entry 3183 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: sessions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.sessions_id_seq', 1, false);
+
+
+--
+-- TOC entry 3184 (class 0 OID 0)
+-- Dependencies: 197
+-- Name: sessions_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.sessions_user_id_seq', 1, false);
+
+
+--
+-- TOC entry 3185 (class 0 OID 0)
+-- Dependencies: 199
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 14, true);
+
+
+--
+-- TOC entry 3034 (class 2606 OID 16454)
+-- Name: games game_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.games
+    ADD CONSTRAINT game_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3028 (class 2606 OID 16420)
+-- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sessions
+    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3030 (class 2606 OID 16431)
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3031 (class 1259 OID 16460)
+-- Name: fki_player1_fk; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_player1_fk ON public.games USING btree (player1_id);
+
+
+--
+-- TOC entry 3032 (class 1259 OID 16466)
+-- Name: fki_player2_fk; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_player2_fk ON public.games USING btree (player2_id);
+
+
+--
+-- TOC entry 3026 (class 1259 OID 16437)
+-- Name: fki_session_user_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_session_user_id ON public.sessions USING btree (user_id);
+
+
+--
+-- TOC entry 3036 (class 2606 OID 16455)
+-- Name: games player1_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.games
+    ADD CONSTRAINT player1_fk FOREIGN KEY (player1_id) REFERENCES public.users(id);
+
+
+--
+-- TOC entry 3037 (class 2606 OID 16461)
+-- Name: games player2_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.games
+    ADD CONSTRAINT player2_fk FOREIGN KEY (player2_id) REFERENCES public.users(id);
+
+
+--
+-- TOC entry 3035 (class 2606 OID 16432)
+-- Name: sessions session_user_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sessions
+    ADD CONSTRAINT session_user_id FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+-- Completed on 2019-09-14 15:18:33 EDT
+
+--
+-- PostgreSQL database dump complete
+--
+
+\connect postgres
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.5
+-- Dumped by pg_dump version 11.5
+
+-- Started on 2019-09-14 15:18:33 EDT
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 1 (class 3079 OID 16384)
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 3123 (class 0 OID 0)
+-- Dependencies: 1
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+-- Completed on 2019-09-14 15:18:33 EDT
+
+--
+-- PostgreSQL database dump complete
+--
+
+-- Completed on 2019-09-14 15:18:33 EDT
+
+--
+-- PostgreSQL database cluster dump complete
+--
+

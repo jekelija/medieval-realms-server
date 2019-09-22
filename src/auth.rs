@@ -1,5 +1,4 @@
 
-extern crate env_logger;
 extern crate ring;
 extern crate data_encoding;
 
@@ -119,6 +118,7 @@ pub fn do_signup(
                 form.password.as_bytes(),
                 &mut pbkdf2_hash,
             );
+            
             Ok((form, pbkdf2_hash, salt))
         })
         .and_then(|(form, hash, salt_value)| {

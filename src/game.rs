@@ -51,6 +51,28 @@ pub fn do_create_game(
     }
 }
 
+// pub fn do_get_games(
+//     session: Session,
+//     userId: i32,
+// ) -> Result<impl Reply, Rejection> {
+//     use schema::games::dsl::*;
+//     let result = games
+//         .filter(player1_id.eq(userId).or(player2_id.eq(userId)))
+//         .load(session.db());
+//     match result {
+//         Ok(_) => {
+//             Response::builder()
+//                 .status(StatusCode::OK)
+//                 // TODO: Set a session cookie?
+//                 .body(result.)
+//                 .map_err(custom)
+//         }
+//         Err(msg) => {
+//             Err(warp::reject::custom(msg))
+//         }
+//     }
+// }
+
 //TODO find game by id, set my data, and get shared data back
 pub fn do_join_game(
     session: Session,

@@ -1,6 +1,7 @@
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use log::error;
+use data_encoding::HEXUPPER;
 
 use ring::{pbkdf2};
 
@@ -39,9 +40,10 @@ impl User {
 
         let n_iter: std::num::NonZeroU32 = std::num::NonZeroU32::new(100_000).unwrap();
 
-        match pbkdf2::verify(PBKDF2_ALG, n_iter, &salt_value.into_bytes(),
+
+        match pbkdf2::verify(PBKDF2_ALG, n_iter, &HEXUPPER.decode(&salt_value.into_bytes()).unwrap(),
                             pass.as_bytes(),
-                            &hash.into_bytes()) {
+                            &HEXUPPER.decode(&hash.into_bytes()).unwrap()) {
             Ok(_) => Some(user),
             Err(e) => {
                 error!("Verify failed for {:?}: {:?}", user, e);
