@@ -9,11 +9,11 @@ static PBKDF2_ALG: pbkdf2::Algorithm = pbkdf2::PBKDF2_HMAC_SHA512;
 
 pub enum GameState {
     CREATED,
-    // JOINED,
+    JOINED,
     // OVER
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Clone, Queryable)]
 pub struct User {
     pub id: i32,
     pub username: String

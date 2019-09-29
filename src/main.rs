@@ -76,7 +76,8 @@ fn main() {
 
     let cors = warp::cors()
         .allow_any_origin()
-        .allow_headers(vec!["Content-Type"])
+        .allow_headers(vec!["Content-Type", "EXAUTH"])
+        .expose_headers(vec!["EXAUTH"])
         .allow_methods(vec!["POST", "GET"]);
 
     let post = warp::post2().and(signup.or(logout).or(login).or(game));

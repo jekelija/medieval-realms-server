@@ -11,7 +11,7 @@ use data_encoding::HEXUPPER;
 use diesel::insert_into;
 use diesel::prelude::*;
 use serde::Deserialize;
-use warp::http::{header, Response, StatusCode};
+use warp::http::{Response, StatusCode};
 use warp::{
     reject::{custom}, Rejection, Reply,
 };
@@ -69,9 +69,13 @@ pub fn do_login(
         Response::builder()
             .status(StatusCode::OK)
             .header(
-                header::SET_COOKIE,
-                format!("EXAUTH={}; SameSite=Strict; HttpOpnly", cookie),
+               "EXAUTH",
+               format!("{}", cookie),
             )
+            //.header(
+            //    header::SET_COOKIE,
+            //    format!("EXAUTH={}", cookie),
+            //)
             .body(b"".to_vec())
             .map_err(custom)
     } else {
@@ -83,10 +87,10 @@ pub fn do_logout(mut session: Session) -> Result<impl Reply, Rejection> {
     session.clear();
     Response::builder()
         .status(StatusCode::OK)
-        .header(
-            header::SET_COOKIE,
-            "EXAUTH=; Max-Age=0; SameSite=Strict; HttpOpnly",
-        )
+        //.header(
+        //    header::SET_COOKIE,
+        //    "EXAUTH=; Max-Age=0; SameSite=Strict; HttpOnly",
+        //)
         .body(b"".to_vec())
         .map_err(custom)
 }

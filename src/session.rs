@@ -7,7 +7,7 @@ use log::{debug, error};
 use rand::distributions::Alphanumeric;
 use rand::thread_rng;
 use rand::Rng;
-use warp::filters::{cookie, BoxedFilter};
+use warp::filters::{BoxedFilter};
 use warp::{self, reject::custom, Filter};
 
 type PooledPg = PooledConnection<ConnectionManager<PgConnection>>;
@@ -24,7 +24,7 @@ type PgPool = Pool<ConnectionManager<PgConnection>>;
 pub struct Session {
     db: PooledPg,
     id: Option<i32>,
-    user: Option<User>,
+    pub user: Option<User>,
 }
 
 impl Session {
@@ -123,7 +123,8 @@ fn random_key(len: usize) -> String {
 pub fn create_session_filter(db_url: &str) -> BoxedFilter<(Session,)> {
     let pool = pg_pool(db_url);
     warp::any()
-        .and(cookie::optional("EXAUTH"))
+        // .and(cookie::optional("EXAUTH"))
+        .and(warp::header::optional("EXAUTH"))
         .and_then(move |key: Option<String>| {
             let pool = pool.clone();
             let key = key.as_ref().map(|s| &**s);
