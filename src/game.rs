@@ -2,7 +2,7 @@ extern crate serde_json;
 
 use crate::session::{Session};
 use crate::schema;
-use crate::models::GameState;
+use crate::models::{GameState,Game};
 
 use serde::{Deserialize,Serialize};
 
@@ -32,6 +32,11 @@ struct SendNewGameData {
 
 #[derive(Serialize)]
 struct SendJoinGameData {
+    shared_state: serde_json::Value,
+}
+
+#[derive(Serialize)]
+struct SendGameData {
     shared_state: serde_json::Value,
 }
 
@@ -66,27 +71,32 @@ pub fn do_create_game(
     }
 }
 
-// pub fn do_get_games(
-//     session: Session,
-//     userId: i32,
-// ) -> Result<impl Reply, Rejection> {
-//     use schema::games::dsl::*;
-//     let result = games
-//         .filter(player1_id.eq(userId).or(player2_id.eq(userId)))
-//         .load(session.db());
-//     match result {
-//         Ok(_) => {
-//             Response::builder()
-//                 .status(StatusCode::OK)
-//                 // TODO: Set a session cookie?
-//                 .body(result.)
-//                 .map_err(custom)
-//         }
-//         Err(msg) => {
-//             Err(warp::reject::custom(msg))
-//         }
-//     }
-// }
+pub fn do_get_games(
+    session: Session,
+    game_id:i32
+) -> Result<impl Reply, Rejection> {
+    if session.user.is_none() {
+        return Err(warp::reject::custom("Must be logged in"));
+    }
+    use schema::games::dsl::*;
+    let session_user_clone = session.user.clone();
+    let user_id = session_user_clone.unwrap().id;
+    let result = games
+        .filter(id.eq(game_id).and(state.eq(1).and(player1_id.eq(user_id).or(player2_id.eq(user_id)))))
+        .select((id, shared_data))
+        .first::<Game>(session.db());
+    match result {
+        Ok(_) => {
+            let r_val = SendGameData { 
+                shared_state : result.unwrap().shared_data,
+            };
+            Ok(warp::reply::json(&r_val))
+        }
+        Err(msg) => {
+            Err(warp::reject::custom(msg))
+        }
+    }
+}
 
 //TODO find game by id, set my data, and get shared data back
 pub fn do_join_game(

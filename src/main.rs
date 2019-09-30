@@ -21,8 +21,7 @@ mod game;
 
 use session::{create_session_filter};
 use auth::{do_login, do_logout, do_signup};
-// use game::{do_create_game, do_join_game, do_get_games};
-use game::{do_create_game, do_join_game};
+use game::{do_create_game, do_join_game, do_get_games};
 
 use warp::{
     Filter
@@ -67,12 +66,11 @@ fn main() {
     let join_game = s().and(path("join"))
                     .and(body::json())
                     .and_then(do_join_game);
-    // let get_games = s().and(warp::path::param::<i32>())
-    //                 .and_then(do_get_games);
+    let get_games = s().and(path("get"))
+                    .and(warp::path::param::<i32>())
+                    .and_then(do_get_games);
 
-    let game = warp::path("game").and(create_game.or(join_game));
-
-    // let game_get = warp::path("game").and(get_games);
+    let game = warp::path("game").and(create_game.or(join_game).or(get_games));
 
     let cors = warp::cors()
         .allow_any_origin()
@@ -80,11 +78,9 @@ fn main() {
         .expose_headers(vec!["EXAUTH"])
         .allow_methods(vec!["POST", "GET"]);
 
-    let post = warp::post2().and(signup.or(logout).or(login).or(game));
-    // let get = warp::get2().and(get_games);
+    let endpoints = warp::any().and(signup.or(logout).or(login).or(game));
 
-    // let routes = post.or(get).with(cors);
-    let routes = post.with(cors).with(warp::log("cors test"));
+    let routes = endpoints.with(cors).with(warp::log("logs"));
 
     warp::serve(routes).run(([127, 0, 0, 1], 3030));
 }

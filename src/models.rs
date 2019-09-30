@@ -7,10 +7,17 @@ use ring::{pbkdf2};
 
 static PBKDF2_ALG: pbkdf2::Algorithm = pbkdf2::PBKDF2_HMAC_SHA512;
 
+#[derive(Clone)]
 pub enum GameState {
     CREATED,
     JOINED,
     // OVER
+}
+
+#[derive(Clone, Queryable)]
+pub struct Game {
+    pub id: i32,
+    pub shared_data: serde_json::Value
 }
 
 #[derive(Debug, Clone, Queryable)]
