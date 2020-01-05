@@ -1,0 +1,10 @@
+npm run deploy to do ts before sending up to serverless
+
+create user and login is working
+need to return token with login
+
+game creation next
+
+
+create user: http://2wbz1ab6kk.execute-api.us-east-1.amazonaws.com/dev/users {"userId": "banalwalrus", "email": "jon.jekeli@gmail.com", "password": "P@ssw0rd"}
+login: http://2wbz1ab6kk.execute-api.us-east-1.amazonaws.com/dev/users/login {"userId": "banalwalrus", "password": "P@ssw0rd"}

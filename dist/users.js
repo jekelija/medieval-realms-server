@@ -47,16 +47,20 @@ class UserServices {
                         res.status(200).json({ userId });
                     }
                     else {
-                        res.status(403).json({ error: 'Invalid username/password' });
+                        res.status(403).json({ error: 'Invalid username/password; no match',
+                            dbPassword: result.Item.password,
+                            dbSalt: result.Item.salt,
+                            salted: saltedAndHashedUserPassword,
+                            userPw: password });
                     }
                 }
                 else {
-                    res.status(403).json({ error: 'Invalid username/password' });
+                    res.status(403).json({ error: 'Invalid username/password; no user' });
                 }
             }
             catch (error) {
                 log.error(error);
-                res.status(403).json({ error: 'Invalid username/password' });
+                res.status(403).json({ error: 'Invalid username/password: ' + error });
             }
         });
     }
@@ -77,7 +81,7 @@ class UserServices {
             const passwordData = utils_1.sha512(password, salt);
             const params = {
                 Item: {
-                    passwordData,
+                    password: passwordData,
                     salt,
                     userId,
                     email
