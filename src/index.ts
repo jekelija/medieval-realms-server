@@ -13,8 +13,8 @@ const userServices = new UserServices(dynamoDb);
 app.use(bodyParser.json({ strict: false }));
 
 // Create game endpoint
-app.post('/game', (req, res) => {
-  // TODO
+app.post('/games/user/:userId', (req, res) => {
+  gameServices.createGame(req, res);
 });
 
 // Get game endpoint

@@ -39,6 +39,13 @@ provider:
       Resource:
         - { "Fn::GetAtt": ["UsersDynamoDBTable", "Arn" ] }
         - { "Fn::GetAtt": ["GamesDynamoDBTable", "Arn" ] }
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:386569714631:table/games-table-dev/index/user1-index"
+        - "arn:aws:dynamodb:us-east-1:386569714631:table/games-table-dev/index/user2-index"
   environment:
     USERS_TABLE: ${self:custom.userTableName}
     GAMES_TABLE: ${self:custom.gameTableName}
@@ -144,10 +151,43 @@ resources:
           -
             AttributeName: gameId
             AttributeType: S
+          -
+            AttributeName: user1
+            AttributeType: S
+          -
+            AttributeName: user2
+            AttributeType: S
         KeySchema:
           -
             AttributeName: gameId
             KeyType: HASH
+        GlobalSecondaryIndexes:
+        - IndexName: user1-index
+          KeySchema:
+          - AttributeName: user1
+            KeyType: HASH
+          Projection:
+            NonKeyAttributes:
+            - gameid
+            - gamestate
+            - user2
+            ProjectionType: INCLUDE
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: user2-index
+          KeySchema:
+          - AttributeName: user2
+            KeyType: HASH
+          Projection:
+            NonKeyAttributes:
+            - gameid
+            - gamestate
+            - user1
+            ProjectionType: INCLUDE
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

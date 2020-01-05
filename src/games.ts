@@ -29,10 +29,10 @@ export class GameServices {
                 gameId,
                 gamestate: GAME_STATE.CREATED,
                 user1: userId,
-                user2: '',
                 user1_data: {},
                 user2_data: {},
-                shared_data: {}
+                shared_data: {},
+                createdate: new Date().getTime()
             },
             TableName: GAMES_TABLE
         };
@@ -52,17 +52,28 @@ export class GameServices {
           res.status(400).json({ error: '"userId" must be a string' });
         }
 
-        const params = {
+        const user1Params = {
             ExpressionAttributeValues: {
-                ':u' : {S: userId}
+                ':u' : userId
             },
-            KeyConditionExpression: 'user1 = :u or user2 = :u',
+            IndexName: 'user1-index',
+            KeyConditionExpression: 'user1 = :u',
             ProjectionExpression: 'gameid,gamestate,user1,user2',
             TableName: GAMES_TABLE
-          };
+        };
+        const user2Params = {
+            ExpressionAttributeValues: {
+                ':u' : userId
+            },
+            IndexName: 'user2-index',
+            KeyConditionExpression: 'user2 = :u',
+            ProjectionExpression: 'gameid,gamestate,user1,user2',
+            TableName: GAMES_TABLE
+        };
         try {
-            const result = await this.dynamoDb.query(params).promise();
-            res.status(200).json(result.Items);
+            const result1 = await this.dynamoDb.query(user1Params).promise();
+            const result2 = await this.dynamoDb.query(user2Params).promise();
+            res.status(200).json(result1.Items.concat(result2.Items));
         } catch (error) {
             log.error(error);
             res.status(500).json({ error });
