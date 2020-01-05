@@ -2,10 +2,12 @@ import AWS from 'aws-sdk';
 import bodyParser from 'body-parser';
 import express from "express";
 import serverless from "serverless-http";
+import { GameServices } from './games';
 import { UserServices } from './users';
 
 const app = express();
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const gameServices = new GameServices(dynamoDb);
 const userServices = new UserServices(dynamoDb);
 
 app.use(bodyParser.json({ strict: false }));
@@ -13,6 +15,11 @@ app.use(bodyParser.json({ strict: false }));
 // Create game endpoint
 app.post('/game', (req, res) => {
   // TODO
+});
+
+// Get game endpoint
+app.get('/games/user/:userId', (req, res) => {
+  gameServices.getGamesForUser(req, res);
 });
 
 // Auth User endpoint

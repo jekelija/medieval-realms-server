@@ -77,7 +77,7 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
+  medieval-realms:
     handler: dist/index.handler
     events:
       - http: ANY /

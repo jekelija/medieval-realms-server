@@ -1,7 +1,7 @@
 npm run deploy to do ts before sending up to serverless
 
 create user and login is working
-need to return token with login
+down the road, need to return token with login; for now, just leave all endpoints public; not storing any real information
 
 game creation next
 
