@@ -119,7 +119,7 @@ resources:
       Properties:
         AttributeDefinitions:
           -
-            AttributeName: gameId
+            AttributeName: gameid
             AttributeType: S
           -
             AttributeName: user1
@@ -129,7 +129,7 @@ resources:
             AttributeType: S
         KeySchema:
           -
-            AttributeName: gameId
+            AttributeName: gameid
             KeyType: HASH
         GlobalSecondaryIndexes:
         - IndexName: user1-index

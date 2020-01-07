@@ -23,10 +23,10 @@ export class GameServices {
         if (typeof userId !== 'string') {
           res.status(400).json({ error: '"userId" must be a string' });
         }
-        const gameId = getRandomString(16);
+        const gameid = getRandomString(16);
         const params = {
             Item: {
-                gameId,
+                gameid,
                 gamestate: GAME_STATE.CREATED,
                 user1: userId,
                 user1_data: {},
@@ -39,7 +39,7 @@ export class GameServices {
 
         try {
             await this.dynamoDb.put(params).promise();
-            res.status(200).json( {gameId} );
+            res.status(200).json( {gameid} );
         } catch (error) {
             log.error(error);
             res.status(400).json({ error: 'Could not create game', message: error });
