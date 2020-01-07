@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import bodyParser from 'body-parser';
+import cors from "cors";
 import express from "express";
 import serverless from "serverless-http";
 import { GameServices } from './games';
@@ -10,6 +11,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const gameServices = new GameServices(dynamoDb);
 const userServices = new UserServices(dynamoDb);
 
+app.use(cors());
 app.use(bodyParser.json({ strict: false }));
 
 // Create game endpoint
