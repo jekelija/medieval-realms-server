@@ -20,7 +20,12 @@ org: jonjekeli
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
 
+plugins:
+  - serverless-finch
+
 custom:
+  client:
+    bucketName: medieval-realms-frontend
   userTableName: 'users-table-${self:provider.stage}'
   gameTableName: 'games-table-${self:provider.stage}'
 

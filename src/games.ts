@@ -4,14 +4,14 @@ import AWS from 'aws-sdk';
 import express from "express";
 import {getRandomString} from './utils';
 
-const GAME_STATE = {
-    CREATED: 0,
-    USER1_TURN: 10,
-    USER2_TURN: 11,
-    USER1_WON: 20,
-    USER2_WON: 21,
-    DRAW: 22
-};
+export enum GAME_STATE {
+    CREATED= 0,
+    USER1_TURN= 10,
+    USER2_TURN= 11,
+    USER1_WON= 20,
+    USER2_WON= 21,
+    DRAW= 22
+}
 
 const GAMES_TABLE = process.env.GAMES_TABLE;
 
