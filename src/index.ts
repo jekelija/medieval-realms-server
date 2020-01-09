@@ -19,6 +19,11 @@ app.post('/games/user/:userId', (req, res) => {
   gameServices.createGame(req, res);
 });
 
+// Create game endpoint
+app.post('/games/:gameId/:userId', (req, res) => {
+  gameServices.joinGame(req, res);
+});
+
 // Get game endpoint
 app.get('/games/user/:userId', (req, res) => {
   gameServices.getGamesForUser(req, res);

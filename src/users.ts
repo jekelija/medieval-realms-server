@@ -2,9 +2,8 @@ import * as log from 'loglevel';
 
 import AWS from 'aws-sdk';
 import express from "express";
+import { USERS_TABLE } from './constants';
 import {getRandomString, sha512} from './utils';
-
-const USERS_TABLE = process.env.USERS_TABLE;
 
 export class UserServices {
     constructor(public dynamoDb: AWS.DynamoDB.DocumentClient) {}
