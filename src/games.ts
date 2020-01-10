@@ -3,7 +3,10 @@ import * as log from 'loglevel';
 import AWS from 'aws-sdk';
 import express from "express";
 import { GAMES_TABLE, USERS_TABLE } from './constants';
+import { Card } from './model/card';
 import { GAME_STATE, IGame } from './model/game';
+import { PlayerState } from './model/playerstate';
+import { SharedState } from './model/sharedstate';
 import {getRandomString} from './utils';
 
 export class GameServices {
@@ -88,6 +91,32 @@ export class GameServices {
         }
     }
 
+    public async getGameForUser(req: express.Request, res: express.Response): Promise<void> {
+        const gameId = req.params.gameId;
+        const userId = req.params.userId;
+        if (typeof gameId !== 'string') {
+          res.status(400).json({ error: '"gameId" must be a string' });
+        }
+        if (typeof userId !== 'string') {
+            res.status(400).json({ error: '"userId" must be a string' });
+          }
+
+        try {
+            const game = await this.getGame(gameId);
+            if (game) {
+                const returnData = Object.assign({}, game);
+                game.user1 !== userId ? returnData.user1_data = null : returnData.user2_data = null;
+                res.status(200).json( returnData );
+            }
+            else {
+                res.status(404).json({ error: 'Game ' + gameId + ' does not exist' });
+            }
+        } catch (error) {
+            log.error(error);
+            res.status(500).json({ error });
+        }
+    }
+
     public async getGamesForUser(req: express.Request, res: express.Response): Promise<void> {
         const userId = req.params.userId;
         if (typeof userId !== 'string') {
@@ -122,20 +151,53 @@ export class GameServices {
         }
     }
 
+    private drawCards(goingFirst: boolean, state: PlayerState): void {
+        for (let i = 0; i < (goingFirst ? 3 : 5); ++i) {
+            state.hand.push(new Card());
+        }
+    }
+
+    private starterDeck(goingFirst: boolean, state: PlayerState): void {
+        for (let i = 0; i < (goingFirst ? 7 : 5); ++i) {
+            state.drawPile.push(new Card());
+        }
+    }
+
     private async startGame(game: IGame, userId: string): Promise<IGame> {
         const userToUpdate = !game.user1 ? 'user1' : 'user2';
         // pick someone random to go first
         const newState = Math.random() >= .5 ? GAME_STATE.USER2_TURN : GAME_STATE.USER1_TURN;
+
+        const player1State = new PlayerState();
+        this.starterDeck(newState === GAME_STATE.USER1_TURN, player1State);
+        this.drawCards(newState === GAME_STATE.USER1_TURN, player1State);
+        const player2State = new PlayerState();
+        this.starterDeck(newState === GAME_STATE.USER2_TURN, player2State);
+        this.drawCards(newState === GAME_STATE.USER2_TURN, player2State);
+        const sharedState = new SharedState();
+        for (let i = 0; i < 50; ++i) {
+            sharedState.drawPile.push(new Card());
+        }
+        for (let i = 0; i < 5; ++i) {
+            sharedState.tradeRow.push(new Card());
+        }
+        for (let i = 0; i < 20; ++i) {
+            sharedState.halflings.push(new Card());
+        }
+
         // update the game!
         const params = {
             TableName: GAMES_TABLE,
             Key: {
                 gameid: game.gameid
             },
-            UpdateExpression: "set gamestate=:newgamestate, " + userToUpdate + "=:user",
+            UpdateExpression: "set gamestate=:newgamestate, " + userToUpdate + "=:user, user1_data=:user1data, user2_data=:user2data, shared_data=:sharedstate",
             ExpressionAttributeValues: {
                 ":newgamestate": newState,
-                ":user": userId
+                ":user": userId,
+                ":user1data": player1State,
+                ":user2data": player2State,
+                ":sharedstate": sharedState
             },
             ReturnValues: "NONE"
         };
@@ -144,7 +206,9 @@ export class GameServices {
         // update the model since dynamo db updated
         game[userToUpdate] = userId;
         game.gamestate = newState;
-
+        game.shared_data = sharedState;
+        game.user1_data = player1State;
+        game.user2_data = player2State;
         return game;
     }
 

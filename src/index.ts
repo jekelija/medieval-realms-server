@@ -24,9 +24,14 @@ app.post('/games/:gameId/:userId', (req, res) => {
   gameServices.joinGame(req, res);
 });
 
-// Get game endpoint
+// Get games for user endpoint
 app.get('/games/user/:userId', (req, res) => {
   gameServices.getGamesForUser(req, res);
+});
+
+// Get game by id endpoint for a particular users data
+app.get('/games/:gameId/:userId', (req, res) => {
+  gameServices.getGameForUser(req, res);
 });
 
 // Auth User endpoint
