@@ -1,3 +1,5 @@
+import {getRandomString} from '../utils';
+
 export enum Faction {
     Orcs= 0,
     Knights= 1,
@@ -7,8 +9,10 @@ export enum Faction {
 }
 
 export class Card {
+    public id: string = getRandomString(16);
     public faction: Faction;
 
+    public cost: number = Math.floor(Math.random() * 8);
     public trade: number = Math.floor(Math.random() * 4);
     public authority: number = Math.floor(Math.random() * 3);
     public attack: number = Math.floor(Math.random() * 5);
