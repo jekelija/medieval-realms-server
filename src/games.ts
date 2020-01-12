@@ -80,7 +80,7 @@ export class GameServices {
                     await this.startGame(game, userId);
                     // dont return the other players data, null it out before returning
                     const returnData = Object.assign({}, game);
-                    game.user1 !== userId ? returnData.user1_data = null : returnData.user2_data = null;
+                    this.obscureOtherPlayerData(userId, returnData);
                     res.status(200).json( returnData );
                 }
             }
@@ -105,7 +105,7 @@ export class GameServices {
             const game = await this.getGame(gameId);
             if (game) {
                 const returnData = Object.assign({}, game);
-                game.user1 !== userId ? returnData.user1_data = null : returnData.user2_data = null;
+                this.obscureOtherPlayerData(userId, returnData);
                 res.status(200).json( returnData );
             }
             else {
@@ -149,6 +149,17 @@ export class GameServices {
             log.error(error);
             res.status(500).json({ error });
         }
+    }
+
+    private obscureOtherPlayerData(userId: string, game: IGame): void {
+        // make hand empty, but same length, so we can display how many cards there are
+        const userData = game.user1 !== userId ? game.user1_data : game.user2_data;
+        for (let i = 0; i < userData.hand.length; ++i) {
+            userData.hand[i] = null;
+        }
+        // shuffle draw pile
+        game.user1 !== userId ? game.user1_data.drawPile.sort(() => Math.random() - 0.5) :
+            game.user2_data.drawPile.sort(() => Math.random() - 0.5);
     }
 
     private drawCards(goingFirst: boolean, state: PlayerState): void {

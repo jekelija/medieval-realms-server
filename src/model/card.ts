@@ -12,6 +12,8 @@ export class Card {
     public id: string = getRandomString(16);
     public faction: Faction;
 
+    public name: string = 'Test Card';
+
     public cost: number = Math.floor(Math.random() * 8);
     public trade: number = Math.floor(Math.random() * 4);
     public authority: number = Math.floor(Math.random() * 3);

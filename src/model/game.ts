@@ -1,3 +1,6 @@
+import { PlayerState } from "./playerstate";
+import { SharedState } from "./sharedstate";
+
 export enum GAME_STATE {
     CREATED= 0,
     USER1_TURN= 10,
@@ -9,9 +12,9 @@ export enum GAME_STATE {
 
 export interface IGame {
     gamestate: GAME_STATE;
-    user1_data: any;
-    user2_data: any;
-    shared_data: any;
+    user1_data: PlayerState;
+    user2_data: PlayerState;
+    shared_data: SharedState;
     createdate: number; // epoch time
     gameid: string;
     user1: string;
