@@ -4,4 +4,5 @@ export class TurnInfo {
     public authority: number;
     public cardsAcquired: string[] = [];
     public cardsTrashed: string[] = [];
+    public cardsPlayed: string[] = [];
 }

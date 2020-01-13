@@ -91,6 +91,68 @@ export class GameServices {
         }
     }
 
+    public async endTurn(req: express.Request, res: express.Response): Promise<void> {
+        const gameId = req.params.gameId;
+        const userId = req.params.userId;
+        const { sharedState, playerData, otherPlayerHealth } = req.body;
+
+        if (typeof gameId !== 'string') {
+            res.status(400).json({ error: '"gameId" must be a string' });
+        }
+        if (typeof userId !== 'string') {
+          res.status(400).json({ error: '"userId" must be a string' });
+        }
+        if (!sharedState) {
+          res.status(400).json({ error: '"sharedState" must be provided' });
+        }
+        if (!playerData) {
+            res.status(400).json({ error: '"playerData" must be provided' });
+        }
+        if (!otherPlayerHealth) {
+            res.status(400).json({ error: '"otherPlayerHealth" must be provided' });
+        }
+
+        try {
+            // is my user valid
+            const params = {
+                Key: {
+                    userId,
+                },
+                TableName: USERS_TABLE
+            };
+            const userResponse = await this.dynamoDb.get(params).promise();
+            if (!userResponse.Item) {
+                res.status(400).json({ error: 'User ' + userId + ' is not valid' });
+            }
+            else {
+                const game = await this.getGame(gameId);
+                if (!game) {
+                    res.status(404).json({ error: 'Game ' + gameId + ' does not exist' });
+                }
+                else if (game.user1 !== userId && game.user2 !== userId) {
+                    res.status(400).json({ error: 'You are not a part of game ' + gameId });
+                }
+                else if (game.user1 === userId && game.gamestate !== GAME_STATE.USER1_TURN) {
+                    res.status(400).json({ error: 'It is not your turn in game ' + gameId });
+                }
+                else if (game.user2 === userId && game.gamestate !== GAME_STATE.USER2_TURN) {
+                    res.status(400).json({ error: 'It is not your turn in game ' + gameId });
+                }
+                else {
+                    await this.updateGame(game, userId, sharedState, playerData, otherPlayerHealth);
+                    // dont return the other players data, null it out before returning
+                    const returnData = Object.assign({}, game);
+                    this.obscureOtherPlayerData(userId, returnData);
+                    res.status(200).json( returnData );
+                }
+            }
+
+        } catch (error) {
+            log.error(error);
+            res.status(400).json({ error: 'Could not join game' });
+        }
+    }
+
     public async getGameForUser(req: express.Request, res: express.Response): Promise<void> {
         const gameId = req.params.gameId;
         const userId = req.params.userId;
@@ -160,6 +222,40 @@ export class GameServices {
         // shuffle draw pile
         game.user1 !== userId ? game.user1_data.drawPile.sort(() => Math.random() - 0.5) :
             game.user2_data.drawPile.sort(() => Math.random() - 0.5);
+    }
+
+    private async updateGame(game: IGame, userId: string, sharedState: SharedState,
+                             playerState: PlayerState, otherPlayerHealth: number): Promise<void> {
+        // update shared state
+        game.shared_data = sharedState;
+        // change turn
+        game.gamestate === GAME_STATE.USER1_TURN && userId === game.user1 ?
+            game.gamestate = GAME_STATE.USER2_TURN : game.gamestate = GAME_STATE.USER1_TURN;
+
+        // update player state
+        const dataToUpdate = game.user1 === userId ? 'user1_data' : 'user2_data';
+        game[dataToUpdate] = playerState;
+
+        // update other player health
+        const otherDataToUpdate = game.user1 === userId ? 'user2_data' : 'user1_data';
+        game[otherDataToUpdate].health = otherPlayerHealth;
+
+        // update the game!
+        const params = {
+            TableName: GAMES_TABLE,
+            Key: {
+                gameid: game.gameid
+            },
+            UpdateExpression: "set gamestate=:newgamestate, " + dataToUpdate + "=:user_data," + otherDataToUpdate + "=:other_user_data, shared_data=:sharedstate",
+            ExpressionAttributeValues: {
+                ":newgamestate": game.gamestate,
+                ":user_data": playerState,
+                ":other_user_data": game[otherDataToUpdate],
+                ":sharedstate": game.shared_data
+            },
+            ReturnValues: "NONE"
+        };
+        await this.dynamoDb.update(params).promise();
     }
 
     private drawCards(goingFirst: boolean, state: PlayerState): void {
