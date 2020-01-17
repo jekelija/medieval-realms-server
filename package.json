@@ -40,5 +40,6 @@
     "serverless-plugin-typescript": "^1.1.9",
     "tslint": "^5.20.1",
     "typescript": "^3.7.4"
-  }
+  },
+  "optionalDependencies": {}
 }
