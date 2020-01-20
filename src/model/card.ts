@@ -30,6 +30,8 @@ export class Card {
 
     public name: string = 'Test Card';
     public isBase: boolean = Math.random() < .2;
+    public isOutpost: boolean = Math.random() < .2;
+    public baseDefense: number = Math.floor(Math.random() * 8);
 
     public cost: number = Math.floor(Math.random() * 8);
     public trade: number = Math.floor(Math.random() * 4);

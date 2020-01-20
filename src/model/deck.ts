@@ -11,6 +11,8 @@ export const Deck: IDeck = {
             faction: 0, // Orcs= 0, Knights= 1, Elves= 2, Dwarves= 3, None= 4
             name: 'Example',
             isBase: false,
+            isOutpost: false,
+            baseDefense: 0,
             cost: 4,
             trade: 2,
             authority: 0,
