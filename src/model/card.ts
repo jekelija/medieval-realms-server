@@ -15,13 +15,20 @@ export enum CardActionType {
     NEXT_SHIP_TO_TOP_OF_DECK= 3,
     OPPONENT_DISCARD= 4,
     TRASH_IN_TRADE_ROW= 5,
+    DESTROY_TARGET_BASE= 6,
+    ACQUIRE_CARD_TO_TOP_OF_DECK= 7,
+    FIVE_DAMAGE_OR_DRAW_PER_ORC= 8,
+    ONE_TRADE_OR_RECYCLE_TWO= 9,
+    ATTACK_PER_SHIP= 10,
+    DRAW_IF_TWO_BASE= 11,
+    CHOOSE_ONE= 12
 }
 
 export interface ICardAction {
     type: CardActionType;
     // only needed for certain types.
     // For example, if type is draw card, no modifier == draw 1 card. if modifier is 2, draw 2 cards
-    modifier?: number;
+    modifier?: any;
 }
 
 export class Card {

@@ -4,6 +4,7 @@ import AWS from 'aws-sdk';
 import express from "express";
 import { GAMES_TABLE, USERS_TABLE } from './constants';
 import { Card } from './model/card';
+import { Chat } from './model/chat';
 import { GAME_STATE, IGame } from './model/game';
 import { PlayerState } from './model/playerstate';
 import { SharedState } from './model/sharedstate';
@@ -88,6 +89,52 @@ export class GameServices {
         } catch (error) {
             log.error(error);
             res.status(400).json({ error: 'Could not join game' });
+        }
+    }
+
+    public async addChat(req: express.Request, res: express.Response): Promise<void> {
+        const gameId = req.params.gameId;
+        const userId = req.params.userId;
+        const { message } = req.body;
+        if (typeof gameId !== 'string') {
+            res.status(400).json({ error: '"gameId" must be a string' });
+        }
+        if (typeof userId !== 'string') {
+          res.status(400).json({ error: '"userId" must be a string' });
+        }
+        if (!message) {
+          res.status(400).json({ error: '"message" must be provided' });
+        }
+
+        try {
+            // is my user valid
+            const params = {
+                Key: {
+                    userId,
+                },
+                TableName: USERS_TABLE
+            };
+            const userResponse = await this.dynamoDb.get(params).promise();
+            if (!userResponse.Item) {
+                res.status(400).json({ error: 'User ' + userId + ' is not valid' });
+            }
+            else {
+                const game = await this.getGame(gameId);
+                if (!game) {
+                    res.status(404).json({ error: 'Game ' + gameId + ' does not exist' });
+                }
+                else if (game.user1 !== userId && game.user2 !== userId) {
+                    res.status(400).json({ error: 'You are not a part of game ' + gameId });
+                }
+                else {
+                    await this.updateChat(game, userId, message);
+                    res.status(200).json( game.gameid );
+                }
+            }
+
+        } catch (error) {
+            log.error(error);
+            res.status(500).json({ error: 'Could not add chat message' });
         }
     }
 
@@ -252,6 +299,33 @@ export class GameServices {
                 ":user_data": playerState,
                 ":other_user_data": game[otherDataToUpdate],
                 ":sharedstate": game.shared_data
+            },
+            ReturnValues: "NONE"
+        };
+        await this.dynamoDb.update(params).promise();
+    }
+
+    private async updateChat(game: IGame, userId: string, message: string): Promise<void> {
+        // update the game!
+        const emptyList: Chat[] = [];
+        const newChat = new Chat();
+        newChat.createdate = new Date().getTime();
+        newChat.user = userId;
+        newChat.message = message;
+        newChat.id = getRandomString(16);
+
+        const params = {
+            TableName: GAMES_TABLE,
+            Key: {
+                gameid: game.gameid
+            },
+            UpdateExpression: "set #chatHistory = list_append(if_not_exists(#chatHistory, :empty_list), :chat)",
+            ExpressionAttributeNames: {
+                '#chatHistory': 'chatHistory'
+            },
+            ExpressionAttributeValues: {
+                ":empty_list": emptyList,
+                ":chat": [newChat]
             },
             ReturnValues: "NONE"
         };

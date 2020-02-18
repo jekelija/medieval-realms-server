@@ -1,3 +1,4 @@
+import { Chat } from "./chat";
 import { PlayerState } from "./playerstate";
 import { SharedState } from "./sharedstate";
 
@@ -15,6 +16,7 @@ export interface IGame {
     user1_data: PlayerState;
     user2_data: PlayerState;
     shared_data: SharedState;
+    chatHistory: Chat[];
     createdate: number; // epoch time
     gameid: string;
     user1: string;

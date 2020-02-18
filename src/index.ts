@@ -24,9 +24,14 @@ app.post('/games/:gameId/:userId', (req, res) => {
   gameServices.joinGame(req, res);
 });
 
-// Create game endpoint
+// end game turn endpoint
 app.post('/games/:gameId/:userId/turn', (req, res) => {
   gameServices.endTurn(req, res);
+});
+
+// add chat endpoint
+app.post('/games/:gameId/:userId/chat', (req, res) => {
+  gameServices.addChat(req, res);
 });
 
 // Get games for user endpoint
