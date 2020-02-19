@@ -5,11 +5,11 @@ import express from "express";
 import { GAMES_TABLE, USERS_TABLE } from './constants';
 import { Card } from './model/card';
 import { Chat } from './model/chat';
+import { Deck, HalflingDeck, StartingDeck } from './model/deck';
 import { GAME_STATE, IGame } from './model/game';
 import { PlayerState } from './model/playerstate';
 import { SharedState } from './model/sharedstate';
 import {getRandomString} from './utils';
-import { StartingDeck, HalflingDeck, Deck } from './model/deck';
 
 export class GameServices {
     constructor(public dynamoDb: AWS.DynamoDB.DocumentClient) {}
@@ -333,13 +333,13 @@ export class GameServices {
         await this.dynamoDb.update(params).promise();
     }
 
-    private drawCards(goingFirst: boolean, state: PlayerState, cards:Card[]): void {
+    private drawCards(goingFirst: boolean, state: PlayerState, cards: Card[]): void {
         for (let i = 0; i < (goingFirst ? 3 : 5); ++i) {
             state.hand.push(cards[i]);
         }
     }
 
-    private starterDeck(goingFirst: boolean, state: PlayerState, cards:Card[]): void {
+    private starterDeck(goingFirst: boolean, state: PlayerState, cards: Card[]): void {
         for (let i = (goingFirst ? 2 : 4); i < cards.length; ++i) {
             state.drawPile.push(cards[i]);
         }
@@ -347,8 +347,8 @@ export class GameServices {
 
     private createCardArray(cardInfo: Array<{card: Card, qty: number}>): Card[] {
         const cardArray: Card[] = [];
-        for(const info of cardInfo) {
-            for(let i = 0; i < info.qty; ++i) {
+        for (const info of cardInfo) {
+            for (let i = 0; i < info.qty; ++i) {
                 cardArray.push(info.card);
             }
         }
