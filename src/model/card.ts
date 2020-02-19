@@ -21,7 +21,11 @@ export enum CardActionType {
     ONE_TRADE_OR_RECYCLE_TWO= 9,
     ATTACK_PER_SHIP= 10,
     DRAW_IF_TWO_BASE= 11,
-    CHOOSE_ONE= 12
+    CHOOSE_ONE= 12,
+    CLONE_CARD= 13,
+    ALLY_FOR_ALL= 14,
+    TRASH_CARD_HAND= 15,
+    TRASH_CARD_THEN_DRAW= 16
 }
 
 export interface ICardAction {

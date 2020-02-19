@@ -9,6 +9,7 @@ import { GAME_STATE, IGame } from './model/game';
 import { PlayerState } from './model/playerstate';
 import { SharedState } from './model/sharedstate';
 import {getRandomString} from './utils';
+import { StartingDeck, HalflingDeck, Deck } from './model/deck';
 
 export class GameServices {
     constructor(public dynamoDb: AWS.DynamoDB.DocumentClient) {}
@@ -332,16 +333,28 @@ export class GameServices {
         await this.dynamoDb.update(params).promise();
     }
 
-    private drawCards(goingFirst: boolean, state: PlayerState): void {
+    private drawCards(goingFirst: boolean, state: PlayerState, cards:Card[]): void {
         for (let i = 0; i < (goingFirst ? 3 : 5); ++i) {
-            state.hand.push(new Card());
+            state.hand.push(cards[i]);
         }
     }
 
-    private starterDeck(goingFirst: boolean, state: PlayerState): void {
-        for (let i = 0; i < (goingFirst ? 7 : 5); ++i) {
-            state.drawPile.push(new Card());
+    private starterDeck(goingFirst: boolean, state: PlayerState, cards:Card[]): void {
+        for (let i = (goingFirst ? 2 : 4); i < cards.length; ++i) {
+            state.drawPile.push(cards[i]);
         }
+    }
+
+    private createCardArray(cardInfo: Array<{card: Card, qty: number}>): Card[] {
+        const cardArray: Card[] = [];
+        for(const info of cardInfo) {
+            for(let i = 0; i < info.qty; ++i) {
+                cardArray.push(info.card);
+            }
+        }
+
+        // random shuffle
+        return cardArray.sort(() => Math.random() - 0.5);
     }
 
     private async startGame(game: IGame, userId: string): Promise<IGame> {
@@ -349,21 +362,27 @@ export class GameServices {
         // pick someone random to go first
         const newState = Math.random() >= .5 ? GAME_STATE.USER2_TURN : GAME_STATE.USER1_TURN;
 
+        const player1Deck = this.createCardArray(StartingDeck);
+        const player2Deck = this.createCardArray(StartingDeck);
+
         const player1State = new PlayerState();
-        this.starterDeck(newState === GAME_STATE.USER1_TURN, player1State);
-        this.drawCards(newState === GAME_STATE.USER1_TURN, player1State);
+        this.starterDeck(newState === GAME_STATE.USER1_TURN, player1State, player1Deck);
+        this.drawCards(newState === GAME_STATE.USER1_TURN, player1State, player1Deck);
         const player2State = new PlayerState();
-        this.starterDeck(newState === GAME_STATE.USER2_TURN, player2State);
-        this.drawCards(newState === GAME_STATE.USER2_TURN, player2State);
+        this.starterDeck(newState === GAME_STATE.USER2_TURN, player2State, player2Deck);
+        this.drawCards(newState === GAME_STATE.USER2_TURN, player2State, player2Deck);
         const sharedState = new SharedState();
-        for (let i = 0; i < 50; ++i) {
-            sharedState.drawPile.push(new Card());
-        }
+
+        const deck = this.createCardArray(Deck.cards);
         for (let i = 0; i < 5; ++i) {
-            sharedState.tradeRow.push(new Card());
+            sharedState.tradeRow.push(deck[i]);
         }
-        for (let i = 0; i < 20; ++i) {
-            sharedState.halflings.push(new Card());
+        for (let i = 5; i < deck.length; ++i) {
+            sharedState.drawPile.push(deck[i]);
+        }
+        const halflings = this.createCardArray(HalflingDeck);
+        for (const h of halflings) {
+            sharedState.halflings.push(h);
         }
 
         // update the game!

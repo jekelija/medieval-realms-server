@@ -4,6 +4,87 @@ export interface IDeck {
     cards: Array<{card: Card, qty: number}>;
 }
 
+export const HalflingDeck: Array<{card: Card, qty: number}> = [
+    {
+        qty: 10,
+        card: {
+            id: '200',
+            faction: Faction.None,
+            name: 'Halfling',
+            isBase: false,
+            isOutpost: false,
+            baseDefense: 0,
+            cost: 2,
+            trade: 2,
+            authority: 0,
+            attack: 0,
+            extraActions: [],
+            extraTrashActions: [],
+            extraFactionActions: [],
+            trashTrade: 0,
+            trashAuthority: 0,
+            trashAttack: 2,
+            factionBonusTrade: 0,
+            factionBonusAuthority: 0,
+            factionBonusAttack: 0,
+            imageFilename: 'Halfling.jpg'
+        }
+    }
+];
+
+export const StartingDeck: Array<{card: Card, qty: number}> = [
+    {
+        qty: 8,
+        card: {
+            id: '100',
+            faction: Faction.None,
+            name: 'Serf',
+            isBase: false,
+            isOutpost: false,
+            baseDefense: 0,
+            cost: 0,
+            trade: 1,
+            authority: 0,
+            attack: 0,
+            extraActions: [],
+            extraTrashActions: [],
+            extraFactionActions: [],
+            trashTrade: 0,
+            trashAuthority: 0,
+            trashAttack: 0,
+            factionBonusTrade: 0,
+            factionBonusAuthority: 0,
+            factionBonusAttack: 0,
+            imageFilename: 'Serf.jpg'
+        }
+    },
+    {
+        qty: 2,
+        card: {
+            id: '101',
+            faction: Faction.None,
+            name: 'Robber',
+            isBase: false,
+            isOutpost: false,
+            baseDefense: 0,
+            cost: 0,
+            trade: 0,
+            authority: 0,
+            attack: 1,
+            extraActions: [],
+            extraTrashActions: [],
+            extraFactionActions: [],
+            trashTrade: 0,
+            trashAuthority: 0,
+            trashAttack: 0,
+            factionBonusTrade: 0,
+            factionBonusAuthority: 0,
+            factionBonusAttack: 0,
+            imageFilename: 'Robber.jpg'
+        }
+    }
+];
+
 export const Deck: IDeck = {
     cards : [
         {
@@ -891,7 +972,7 @@ export const Deck: IDeck = {
             card: {
                 id: '32',
                 faction: Faction.Elves,
-                name: 'Elven City',
+                name: 'Elven Fortress',
                 isBase: true,
                 isOutpost: false,
                 baseDefense: 6,
@@ -912,7 +993,7 @@ export const Deck: IDeck = {
                 factionBonusTrade: 0,
                 factionBonusAuthority: 0,
                 factionBonusAttack: 0,
-                imageFilename: 'Bases/Elf City.jpg'
+                imageFilename: 'Bases/Elf Fortress.jpg'
             }
         },
         {
@@ -920,7 +1001,7 @@ export const Deck: IDeck = {
             card: {
                 id: '33',
                 faction: Faction.Elves,
-                name: 'Elven Fortress',
+                name: 'Elven City',
                 isBase: true,
                 isOutpost: true,
                 baseDefense: 6,
@@ -941,7 +1022,342 @@ export const Deck: IDeck = {
                 factionBonusTrade: 0,
                 factionBonusAuthority: 0,
                 factionBonusAttack: 0,
-                imageFilename: 'Bases/Elf Fortress.jpg'
+                imageFilename: 'Bases/Elf City.jpg'
+            }
+        },
+        {
+            qty: 3,
+            card: {
+                id: '34',
+                faction: Faction.Dwarves,
+                name: 'Miner',
+                isBase: false,
+                isOutpost: false,
+                baseDefense: 0,
+                cost: 1,
+                trade: 1,
+                authority: 0,
+                attack: 0,
+                extraActions: [{
+                    type: CardActionType.TRASH_CARD
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Units/Dwarf Miner.jpg'
+            }
+        },
+        {
+            qty: 3,
+            card: {
+                id: '35',
+                faction: Faction.Dwarves,
+                name: 'Hammerman',
+                isBase: false,
+                isOutpost: false,
+                baseDefense: 0,
+                cost: 2,
+                trade: 0,
+                authority: 0,
+                attack: 2,
+                extraActions: [{
+                    type: CardActionType.TRASH_CARD
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 2,
+                imageFilename: 'Units/Dwarf Hammerman.jpg'
+            }
+        },
+        {
+            qty: 3,
+            card: {
+                id: '36',
+                faction: Faction.Dwarves,
+                name: 'Smelter',
+                isBase: false,
+                isOutpost: false,
+                baseDefense: 0,
+                cost: 3,
+                trade: 2,
+                authority: 0,
+                attack: 0,
+                extraActions: [{
+                    type: CardActionType.TRASH_CARD
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 2,
+                imageFilename: 'Units/Dwarf Smelter.jpg'
+            }
+        },
+        {
+            qty: 1,
+            card: {
+                id: '37',
+                faction: Faction.Dwarves,
+                name: 'Axeman',
+                isBase: false,
+                isOutpost: false,
+                baseDefense: 0,
+                cost: 5,
+                trade: 0,
+                authority: 0,
+                attack: 4,
+                extraActions: [{
+                    type: CardActionType.TRASH_CARD
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [{
+                    type: CardActionType.DRAW_CARD
+                }],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Units/Dwarf Axeman.jpg'
+            }
+        },
+        {
+            qty: 2,
+            card: {
+                id: '38',
+                faction: Faction.Dwarves,
+                name: 'Shoveler',
+                isBase: false,
+                isOutpost: false,
+                baseDefense: 0,
+                cost: 4,
+                trade: 0,
+                authority: 0,
+                attack: 0,
+                extraActions: [{
+                    type: CardActionType.CHOOSE_ONE,
+                    modifier: {
+                        trade: 3,
+                        attack: 5
+                    }
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [{
+                    type: CardActionType.TRASH_CARD
+                }],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Units/Dwarf Shoveler.jpg'
+            }
+        },
+        {
+            qty: 1,
+            card: {
+                id: '39',
+                faction: Faction.Dwarves,
+                name: 'Woodworker',
+                isBase: false,
+                isOutpost: false,
+                baseDefense: 0,
+                cost: 4,
+                trade: 0,
+                authority: 0,
+                attack: 0,
+                extraActions: [{
+                    type: CardActionType.CLONE_CARD
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Units/Dwarf Woodworker.jpg'
+            }
+        },
+        {
+            qty: 1,
+            card: {
+                id: '40',
+                faction: Faction.Dwarves,
+                name: 'Crossbowman',
+                isBase: false,
+                isOutpost: false,
+                baseDefense: 0,
+                cost: 6,
+                trade: 0,
+                authority: 0,
+                attack: 6,
+                extraActions: [{
+                    type: CardActionType.DESTROY_TARGET_BASE
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [{
+                    type: CardActionType.DRAW_CARD
+                }],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Units/Dwarf Crossbowman.jpg'
+            }
+        },
+        {
+            qty: 2,
+            card: {
+                id: '41',
+                faction: Faction.Dwarves,
+                name: 'Battering Ram',
+                isBase: true,
+                isOutpost: true,
+                baseDefense: 5,
+                cost: 3,
+                trade: 0,
+                authority: 0,
+                attack: 0,
+                extraActions: [],
+                extraTrashActions: [],
+                extraFactionActions: [],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 5,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Bases/Dwarf Battering Ram.jpg'
+            }
+        },
+        {
+            qty: 1,
+            card: {
+                id: '42',
+                faction: Faction.Dwarves,
+                name: 'Iron Mine',
+                isBase: true,
+                isOutpost: true,
+                baseDefense: 6,
+                cost: 7,
+                trade: 0,
+                authority: 0,
+                attack: 0,
+                extraActions: [{
+                    type: CardActionType.DRAW_CARD
+                }, {
+                    type: CardActionType.TRASH_CARD_HAND
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Bases/Dwarf Iron Mine.jpg'
+            }
+        },
+        {
+            qty: 1,
+            card: {
+                id: '43',
+                faction: Faction.Dwarves,
+                name: 'Steel Smelter',
+                isBase: true,
+                isOutpost: true,
+                baseDefense: 5,
+                cost: 6,
+                trade: 0,
+                authority: 0,
+                attack: 0,
+                extraActions: [{
+                    type: CardActionType.TRASH_CARD
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Bases/Dwarf Steel Smelter.jpg'
+            }
+        },
+        {
+            qty: 1,
+            card: {
+                id: '44',
+                faction: Faction.Dwarves,
+                name: 'Copper Mine',
+                isBase: true,
+                isOutpost: true,
+                baseDefense: 5,
+                cost: 5,
+                trade: 0,
+                authority: 0,
+                attack: 0,
+                extraActions: [{
+                    type: CardActionType.ALLY_FOR_ALL
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Bases/Dwarf Copper Mine.jpg'
+            }
+        },
+        {
+            qty: 1,
+            card: {
+                id: '45',
+                faction: Faction.Dwarves,
+                name: 'Mountain Fortress',
+                isBase: true,
+                isOutpost: true,
+                baseDefense: 6,
+                cost: 8,
+                trade: 0,
+                authority: 0,
+                attack: 0,
+                extraActions: [{
+                    type: CardActionType.TRASH_CARD_THEN_DRAW,
+                    modifier: 2
+                }],
+                extraTrashActions: [],
+                extraFactionActions: [],
+                trashTrade: 0,
+                trashAuthority: 0,
+                trashAttack: 0,
+                factionBonusTrade: 0,
+                factionBonusAuthority: 0,
+                factionBonusAttack: 0,
+                imageFilename: 'Bases/Dwarf Mountain Fortress.jpg'
             }
         }
     ]
