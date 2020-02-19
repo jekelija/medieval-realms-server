@@ -340,7 +340,7 @@ export class GameServices {
     }
 
     private starterDeck(goingFirst: boolean, state: PlayerState, cards: Card[]): void {
-        for (let i = (goingFirst ? 2 : 4); i < cards.length; ++i) {
+        for (let i = (goingFirst ? 3 : 5); i < cards.length; ++i) {
             state.drawPile.push(cards[i]);
         }
     }
