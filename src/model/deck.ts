@@ -1,10 +1,10 @@
-import {Card, CardActionType, Faction} from './card';
+import {CardActionType, Faction, ICard} from './card';
 
 export interface IDeck {
-    cards: Array<{card: Card, qty: number}>;
+    cards: Array<{card: ICard, qty: number}>;
 }
 
-export const HalflingDeck: Array<{card: Card, qty: number}> = [
+export const HalflingDeck: Array<{card: ICard, qty: number}> = [
     {
         qty: 10,
         card: {
@@ -32,7 +32,7 @@ export const HalflingDeck: Array<{card: Card, qty: number}> = [
     }
 ];
 
-export const StartingDeck: Array<{card: Card, qty: number}> = [
+export const StartingDeck: Array<{card: ICard, qty: number}> = [
     {
         qty: 8,
         card: {
@@ -576,7 +576,7 @@ export const Deck: IDeck = {
                 factionBonusTrade: 0,
                 factionBonusAuthority: 0,
                 factionBonusAttack: 2,
-                imageFilename: 'Bases/Orc Tower.jpg'
+                imageFilename: 'Bases/Knight Tower.jpg'
             }
         },
         {
@@ -603,7 +603,7 @@ export const Deck: IDeck = {
                 factionBonusTrade: 0,
                 factionBonusAuthority: 0,
                 factionBonusAttack: 0,
-                imageFilename: 'Bases/Orc Smithy.jpg'
+                imageFilename: 'Bases/Knight Smithy.jpg'
             }
         },
         {
@@ -628,7 +628,7 @@ export const Deck: IDeck = {
                 factionBonusTrade: 0,
                 factionBonusAuthority: 0,
                 factionBonusAttack: 4,
-                imageFilename: 'Bases/Orc Turret.jpg'
+                imageFilename: 'Bases/Knight Turret.jpg'
             }
         },
         {
@@ -655,7 +655,7 @@ export const Deck: IDeck = {
                 factionBonusTrade: 0,
                 factionBonusAuthority: 0,
                 factionBonusAttack: 0,
-                imageFilename: 'Bases/Orc Drawbridge.jpg'
+                imageFilename: 'Bases/Knight Drawbridge.jpg'
             }
         },
         {
@@ -682,7 +682,7 @@ export const Deck: IDeck = {
                 factionBonusTrade: 0,
                 factionBonusAuthority: 0,
                 factionBonusAttack: 0,
-                imageFilename: 'Bases/Orc Castle.jpg'
+                imageFilename: 'Bases/Knight Castle.jpg'
             }
         },
         {

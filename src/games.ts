@@ -3,7 +3,7 @@ import * as log from 'loglevel';
 import AWS from 'aws-sdk';
 import express from "express";
 import { GAMES_TABLE, USERS_TABLE } from './constants';
-import { Card } from './model/card';
+import { ICard } from './model/card';
 import { Chat } from './model/chat';
 import { Deck, HalflingDeck, StartingDeck } from './model/deck';
 import { GAME_STATE, IGame } from './model/game';
@@ -333,22 +333,24 @@ export class GameServices {
         await this.dynamoDb.update(params).promise();
     }
 
-    private drawCards(goingFirst: boolean, state: PlayerState, cards: Card[]): void {
+    private drawCards(goingFirst: boolean, state: PlayerState, cards: ICard[]): void {
         for (let i = 0; i < (goingFirst ? 3 : 5); ++i) {
             state.hand.push(cards[i]);
         }
     }
 
-    private starterDeck(goingFirst: boolean, state: PlayerState, cards: Card[]): void {
+    private starterDeck(goingFirst: boolean, state: PlayerState, cards: ICard[]): void {
         for (let i = (goingFirst ? 3 : 5); i < cards.length; ++i) {
             state.drawPile.push(cards[i]);
         }
     }
 
-    private createCardArray(cardInfo: Array<{card: Card, qty: number}>): Card[] {
-        const cardArray: Card[] = [];
+    private createCardArray(cardInfo: Array<{card: ICard, qty: number}>): ICard[] {
+        const cardArray: ICard[] = [];
         for (const info of cardInfo) {
             for (let i = 0; i < info.qty; ++i) {
+                // add a new UUID to the card that will get sent to user
+                info.card.uuid = getRandomString(16);
                 cardArray.push(info.card);
             }
         }

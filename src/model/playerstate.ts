@@ -1,9 +1,9 @@
-import {Card} from './card';
+import {ICard} from './card';
 
 export class PlayerState {
-    public drawPile: Card[] = [];
-    public hand: Card[] = [];
-    public basesInPlay: Card[] = [];
-    public discardPile: Card[] = [];
+    public drawPile: ICard[] = [];
+    public hand: ICard[] = [];
+    public basesInPlay: ICard[] = [];
+    public discardPile: ICard[] = [];
     public health: number = 50;
 }
